@@ -3,10 +3,11 @@
     img(src='./assets/logo.png')
     h1 Top Artists
     ul
-      li(v-for="artist in artists") {{ artist.name }}
+      Artist(v-for="artist in artists" :artist="artist" :key="artist.mbid")
 </template>
 
 <script>
+import Artist from './components/Artist.vue'
 import { getArtists } from './api'
 
 export default {
@@ -15,6 +16,9 @@ export default {
     return {
       artists: []
     }
+  },
+  components: {
+    Artist,
   },
   mounted: function () {
     getArtists()
