@@ -2,29 +2,54 @@
   #app
     img(src='./assets/logo.png')
     h1 Top Artists
+    select(v-model="selectedCountry")
+      option(:value="country.value" v-for="country in countries") {{ country.name }}
+    Spinner(v-show="loading")
     ul
       Artist(v-for="artist in artists" :artist="artist" :key="artist.mbid")
 </template>
 
 <script>
 import Artist from './components/Artist.vue'
+import Spinner from './components/Spinner.vue'
 import { getArtists } from './api'
 
 export default {
   name: 'app',
   data () {
     return {
-      artists: []
+      artists: [],
+      countries: [
+        { name: 'Colombia', value: 'colombia' },
+        { name: 'Argentina', value: 'argentina' },
+        { name: 'España', value: 'spain' }
+      ],
+      selectedCountry: 'colombia',
+      loading: true
     }
   },
   components: {
     Artist,
+    Spinner
+  },
+  methods: {
+    refreshArtists () {
+      this.loading = true
+      this.artists = []
+      getArtists(this.selectedCountry)
+        .then(artists => {
+          this.loading = false
+          this.artists = artists
+        })
+    }
   },
   mounted: function () {
-    getArtists()
-      .then(artists => {
-        this.artists = artists
-      })
+    this.refreshArtists()
+  },
+  watch: {
+    selectedCountry () {
+      this.refreshArtists()
+    }
   }
 }
 </script>
